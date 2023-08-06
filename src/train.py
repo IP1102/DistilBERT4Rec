@@ -1,12 +1,11 @@
 import torch
 import torch.nn as nn
 from sklearn.model_selection import train_test_split
-from bert_model import SequentialRecommender
+from .bert_model import SequentialRecommender
 from torch.optim import Adam
+from tqdm import tqdm
 
 class TrainModel:
-
-    
 
     def __init__(self, parameters, hyperparameters, data_loader) -> None:
         self.parameters = parameters
@@ -21,7 +20,7 @@ class TrainModel:
                                       , self.parameters["hidden_size"], self.parameters["num_classes"]).to(device)
         optimizer = Adam(model.parameters(), lr=self.hyperparameters["learning_rate"])
 
-        for epoch in range(self.hyperparameters["num_epochs"]):
+        for epoch in tqdm(range(self.hyperparameters["num_epochs"])):
             model.train()
             total_loss = 0
 
