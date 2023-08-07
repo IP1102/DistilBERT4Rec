@@ -4,7 +4,7 @@ from src.train import TrainModel
 def run():
 
     hyperparameters = {
-        "learning_rate":0.001,
+        "learning_rate":1e-4,
         "num_epochs":10,
         "batch_size":32
     }

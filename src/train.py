@@ -1,4 +1,4 @@
-import torch
+import torch, pickle as pkl, time
 import torch.nn as nn
 from sklearn.model_selection import train_test_split
 from .bert_model import SequentialRecommender
@@ -12,15 +12,30 @@ class TrainModel:
         self.hyperparameters = hyperparameters
         self.dataloader = data_loader
 
+    @staticmethod
+    def __save_binaries(data,path):
+        pkl.dump(data, open(path,"+wb"))
+
+
     def train(self):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         criterion = nn.CrossEntropyLoss()
         model = SequentialRecommender(self.parameters["bert_model_name"], self.parameters["sequence_length"]
                                       , self.parameters["hidden_size"], self.parameters["num_classes"]).to(device)
+        
+        pytorch_total_params = sum(p.numel() for p in model.parameters())                                      
+        pytorch_total_train_params = sum(p.numel() for p in model.parameters() if p.requires_grad)        
+        print(f"Total parameters: {pytorch_total_params}")
+        print(f"Total trainable parameters: {pytorch_total_train_params}")        
+        
         optimizer = Adam(model.parameters(), lr=self.hyperparameters["learning_rate"])
 
+        loss_per_epoch = []
+        time_per_epoch = []
+        train_time = time.time()
         for epoch in tqdm(range(self.hyperparameters["num_epochs"])):
+            start_time_epoch = time.time()
             model.train()
             total_loss = 0
 
@@ -38,4 +53,12 @@ class TrainModel:
                 total_loss += loss.item()
 
             avg_loss = total_loss / len(self.dataloader)
+            loss_per_epoch.append(avg_loss)
+            time_per_epoch.append(time.time() - start_time_epoch)
             print(f'Epoch [{epoch+1}/{self.hyperparameters["num_epochs"]}], Loss: {avg_loss:.4f}')
+        
+        print(f"Total training time = {time.time()-train_time}")
+        print(f"Average time per epoch = {sum(time_per_epoch)/len(time_per_epoch)}")
+        TrainModel.__save_binaries(avg_loss,"./data/epoch_loss.pkl")
+        # TrainModel.__save_binaries(model,"./data/bert_model.pkl")
+        torch.save(model, "./data/bert_model.bin")

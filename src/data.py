@@ -50,7 +50,6 @@ class Data:
         sorted_grouped_data = df.sort_values('timestamp').groupby('userId')['movieId'].apply(list)
         input_ids, labels = [], []
         num_unique_movies = len(sorted(list(set(df['movieId']))))
-        print(max(df['movieId']))
         for inp in tqdm(sorted_grouped_data):
             if len(inp)<=10:
                 continue
