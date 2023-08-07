@@ -1,12 +1,11 @@
-import torch.nn as nn
+import torch.nn as nn, os
 from transformers import BertModel
 
 
 class SequentialRecommender(nn.Module):
     def __init__(self, bert_model_name, sequence_length, hidden_size, num_classes):
         super(SequentialRecommender, self).__init__()
-
-        self.bert = BertModel.from_pretrained(bert_model_name)
+        self.bert = BertModel.from_pretrained('./data/models/')
         self.pooling = nn.AvgPool1d(sequence_length)
         self.fc = nn.Linear(self.bert.config.hidden_size, hidden_size)
         self.output_layer = nn.Linear(hidden_size, num_classes)

@@ -24,7 +24,7 @@ class TrainModel:
             model.train()
             total_loss = 0
 
-            for batch_input_ids, batch_attention_mask, batch_labels in self.dataloader:
+            for batch_input_ids, batch_attention_mask, batch_labels in tqdm(self.dataloader):
                 batch_input_ids = batch_input_ids.to(device)
                 batch_attention_mask = batch_attention_mask.to(device)
                 batch_labels = batch_labels.to(device)
