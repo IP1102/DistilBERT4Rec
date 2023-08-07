@@ -22,7 +22,7 @@ class Data:
       return stoi, itos    
 
     @classmethod
-    def data_loader(cls,path, batch_size):
+    def data_loader(cls,path, batch_size, mode='train'):
 
         cls.path = path
 
@@ -30,14 +30,22 @@ class Data:
         X_train, X_test, y_train, y_test = train_test_split(input_ids, labels, test_size=0.25, random_state=42)
 
         # Train
-        X_train = torch.tensor(X_train)
-        y_train = torch.tensor(y_train)
-        attn_train = [[1]*10]*X_train.shape[0]
-        attn_train = torch.tensor(attn_train)
-        X_train_dataset = TensorDataset(X_train, attn_train, y_train)
-        X_train_loader = DataLoader(X_train_dataset, batch_size=batch_size, shuffle=True)
-
-        return X_train_loader, num_unique_movies
+        if mode == 'train':
+            X_train = torch.tensor(X_train)
+            y_train = torch.tensor(y_train)
+            attn_train = [[1]*10]*X_train.shape[0]
+            attn_train = torch.tensor(attn_train)
+            X_train_dataset = TensorDataset(X_train, attn_train, y_train)
+            X_train_loader = DataLoader(X_train_dataset, batch_size=batch_size, shuffle=True)
+            return X_train_loader, num_unique_movies
+        else:
+            X_test = torch.tensor(X_test)
+            y_test = torch.tensor(y_test)
+            attn_test = [[1]*10]*X_test.shape[0]
+            attn_test = torch.tensor(attn_test)
+            X_test_dataset = TensorDataset(X_test, attn_test, y_test)
+            X_test_loader = DataLoader(X_test_dataset, batch_size=batch_size, shuffle=True)
+            return X_test_loader, num_unique_movies            
 
     @classmethod
     def __load_ml_20m(cls):
