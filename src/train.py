@@ -2,6 +2,7 @@ import torch, pickle as pkl, time
 import torch.nn as nn
 from sklearn.model_selection import train_test_split
 from .bert_model import SequentialRecommender
+from .distil_bert import DistilSequentialRecommender
 from torch.optim import Adam
 from tqdm import tqdm
 
@@ -17,12 +18,16 @@ class TrainModel:
         pkl.dump(data, open(path,"+wb"))
 
 
-    def train(self):
+    def train(self,model_name='distilbert'):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         criterion = nn.CrossEntropyLoss()
-        model = SequentialRecommender(self.parameters["bert_model_name"], self.parameters["sequence_length"]
-                                      , self.parameters["hidden_size"], self.parameters["num_classes"]).to(device)
+        if model_name == "distilbert":
+            model = DistilSequentialRecommender(self.parameters["bert_model_name"], self.parameters["sequence_length"]
+                                , self.parameters["hidden_size"], self.parameters["num_classes"]).to(device)
+        else:
+            model = SequentialRecommender(self.parameters["bert_model_name"], self.parameters["sequence_length"]
+                                        , self.parameters["hidden_size"], self.parameters["num_classes"]).to(device)
         
         pytorch_total_params = sum(p.numel() for p in model.parameters())                                      
         pytorch_total_train_params = sum(p.numel() for p in model.parameters() if p.requires_grad)        
@@ -59,6 +64,6 @@ class TrainModel:
         
         print(f"Total training time = {time.time()-train_time}")
         print(f"Average time per epoch = {sum(time_per_epoch)/len(time_per_epoch)}")
-        TrainModel.__save_binaries(avg_loss,"./data/epoch_loss.pkl")
+        TrainModel.__save_binaries(loss_per_epoch,f"./data/{model_name}_epoch_loss.pkl")
         # TrainModel.__save_binaries(model,"./data/bert_model.pkl")
-        torch.save(model, "./data/bert_model.bin")
+        torch.save(model, f"./data/{model_name}_model.bin")

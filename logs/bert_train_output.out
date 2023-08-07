@@ -1,14 +1,14 @@
 Total parameters: 113030648
 Total trainable parameters: 113030648
-Epoch [1/10], Loss: 7.5024
+Epoch [1/10], Loss: 7.5181
 Epoch [2/10], Loss: 7.2527
-Epoch [3/10], Loss: 7.2340
-Epoch [4/10], Loss: 7.2283
-Epoch [5/10], Loss: 7.2249
-Epoch [6/10], Loss: 7.2232
-Epoch [7/10], Loss: 7.2211
-Epoch [8/10], Loss: 7.2196
-Epoch [9/10], Loss: 7.2184
-Epoch [10/10], Loss: 7.2172
-Total training time = 868.192328453064
-Average time per epoch = 86.81897706985474
+Epoch [3/10], Loss: 7.2357
+Epoch [4/10], Loss: 7.2294
+Epoch [5/10], Loss: 7.2262
+Epoch [6/10], Loss: 7.2238
+Epoch [7/10], Loss: 7.2218
+Epoch [8/10], Loss: 7.2226
+Epoch [9/10], Loss: 7.2194
+Epoch [10/10], Loss: 7.2180
+Total training time = 865.3159372806549
+Average time per epoch = 86.5312109708786
