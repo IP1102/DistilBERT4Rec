@@ -1,8 +1,9 @@
 from src.data import Data
 from src.train import TrainModel
 from src.test import TestModel
+import sys
 
-def run():
+def run(mode, data_path, model_path=None):
 
     hyperparameters = {
         "learning_rate":1e-4,
@@ -10,8 +11,6 @@ def run():
         "batch_size":32
     }
 
-    # train_data_loader, num_classes = Data.data_loader('./data/ml-20m/ratings.csv',hyperparameters["batch_size"])
-    test_data_loader, num_classes = Data.data_loader('./data/ml-20m/ratings.csv',hyperparameters["batch_size"])
     parameters = {
         "bert_model_name":'./data/models/distilbert/',
         "sequence_length":10,
@@ -19,8 +18,20 @@ def run():
         "num_classes":num_classes,
     }
 
-    # TrainModel(parameters=parameters, hyperparameters=hyperparameters, data_loader=train_data_loader).train('distilbert')
-    TestModel("/home/ip1102/projects/def-tusharma/ip1102/DistilBERT4Rec/data/bert_model.bin", test_data_loader).test()
+    if mode == 'train':
+        train_data_loader, num_classes = Data.data_loader(data_path,hyperparameters["batch_size"])
+        # train_data_loader, num_classes = Data.data_loader('./data/ml-20m/ratings.csv',hyperparameters["batch_size"])
+        TrainModel(parameters=parameters, hyperparameters=hyperparameters, data_loader=train_data_loader).train('distilbert')
+    if mode == "test":
+        test_data_loader, num_classes = Data.data_loader(data_path,hyperparameters["batch_size"])
+        TestModel(model_path, test_data_loader).test()
+
 
 if __name__=="__main__":
-    run()
+    mode = sys.argv[1]
+    if mode == 'train':
+        data_path = sys.argv[2]
+    if mode == 'test':
+        data_path = sys.argv[2]
+        model_path = sys.argv[3]
+    run(data_path, model_path)
